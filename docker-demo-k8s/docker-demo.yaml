@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker-demo
+spec:
+  type: LoadBalancer
+  selector:
+    app: docker-demo
+  ports:
+  - port: 8080
+    targetPort: 8080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-demo
+spec:
+  selector:
+    matchLabels:
+      app: docker-demo
+  template:
+    metadata:
+      labels:
+        app: docker-demo
+    spec:
+      containers:
+      - name: docker-demo
+        image: prabuddha66/docker-demo
+        ports:
+        - containerPort: 8080
+          name: docker-demo
+        env: 
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://mysqldb:3306/docker_demo
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: root
+        - name: SPRING_JPA_SHOW-SQL
+          value: "true"
+        - name: SPRING_JPA_HIBERNATE_DDL-AUTO
+          value: update
+        - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+          value: org.hibernate.dialect.MySQL5Dialect
+
